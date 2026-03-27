@@ -1,20 +1,35 @@
+<div align="center">
+
+```
+███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+     A N A L Y T I C S  —  D A S H B O A R D
+```
+
+# Advanced UI Implementation
+
+**Laboratory Activity 2 — CSS Grid · Accessibility · Keyboard Navigation · Device Simulation**
+
 <br/>
 
-## Table of Contents
-
-- [About the Project](#-about-the-project)
-- [Live Preview](#-live-preview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Device Simulation & Testing](#-device-simulation--testing)
-- [Accessibility Audit](#-accessibility-audit)
-- [Keyboard Navigation](#-keyboard-navigation)
-- [Authors](#-authors)
-- [Acknowledgements](#-acknowledgements)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Bootstrap Icons](https://img.shields.io/badge/Bootstrap_Icons-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=black)
 
 <br/>
+
+> *A fully responsive, accessible, keyboard-navigable Analytics & Sales Dashboard built with a mobile-first approach dark mode, lime accent, clean grid.*
+
+<br/>
+
+</div>
 
 ---
 
@@ -33,6 +48,195 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 
 <br/>
 
+---
 
+## Live Preview
+
+<div align="center">
+
+### Desktop View — 1440px
+
+<img src="screenshots/desktop.jpg" width="30%" alt="Desktop mode" />
+
+<br/>
+
+### Mobile View — 375px (iPhone SE)
+ 
+  <img src="screenshots/phone.jpg" width="30%" alt="Phone view" />
+
+</div>
+
+<br/>
+
+---
+
+## Features
+
+- **KPI Cards** — Total Revenue, Orders, Conversion Rate, Avg Order Value with sparkline SVGs and delta indicators
+- ** Revenue Bar Chart** — Pure CSS bars comparing current vs previous period across 6 months
+- ** Donut Chart** — SVG-based sales breakdown by channel (Direct, Organic, Paid, Referral)
+- ** Top Products Table** — Scrollable data table with status pills (Active / Pending / Paused)
+- **Activity Feed** — Live-style event log with timestamped entries
+- ** Toast Notifications** — ARIA live region announcements for all interactions
+- ** Off-Canvas Sidebar** — Mobile slide-in nav with overlay, ESC key close, focus trap
+- ** Dark Theme** — Full dark palette with `#e8ff47` lime accent, `#7b5cf0` violet secondary
+- ** Date Range Tabs** — Toggle filter with `aria-pressed` state management
+- ** Search Bar** — Accessible search input with `role="search"`
+- **Skip Link** — First tab stop jumps directly to main content
+
+<br/>
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Markup** | HTML5 | Semantic structure, ARIA roles |
+| **Styling** | CSS3 | Custom properties, animations, scrollbar |
+| **Layout** | Tailwind CSS v3 (CDN) | Utility-first responsive grid & spacing |
+| **Icons** | Bootstrap Icons v1.11 (CDN) | Crisp vector icon set |
+| **Reactivity** | Alpine.js v3 (CDN) | Declarative JS — sidebar, tabs, toasts, loops |
+| **Typography** | Google Fonts | Syne · DM Sans · DM Mono |
+| **Charts** | Pure SVG + CSS | Zero-dependency bar & donut charts |
+
+> **No build tools. No npm. No frameworks.** Just one `.html` file and three CDN scripts.
+
+<br/>
+
+---
+
+##  Getting Started
+
+No installation, no build step, no dependencies to install locally.
+
+### Option A — Open Directly
+```bash
+# Just double-click the file in your file explorer, OR:
+open dashboard-v2.html          # macOS
+start dashboard-v2.html         # Windows
+xdg-open dashboard-v2.html      # Linux
+```
+
+### Option B — Local Dev Server (recommended for DevTools testing)
+```bash
+# Using VS Code Live Server extension — right-click → Open with Live Server
+
+# Using Python
+python -m http.server 8080
+# Then visit: http://localhost:8080/dashboard-v2.html
+
+# Using Node.js
+npx serve .
+# Then visit: http://localhost:3000/dashboard-v2.html
+```
+
+### Option C — CDN Links (already embedded)
+All external resources load from CDN automatically — just open the file with an internet connection.
+
+```html
+<!-- Already in <head> — nothing to install -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+```
+
+<br/>
+
+---
+
+##  Device Simulation & Testing
+
+Tested using **Chrome DevTools → Device Toolbar** (`Ctrl+Shift+M` / `Cmd+Shift+M`).
+
+### Breakpoint Reference
+
+| Device | Viewport | Layout Behavior |
+|---|---|---|
+| **iPhone SE** | `375 × 667` | Single column · Hamburger nav · Sidebar hidden |
+| **iPhone 14 Pro** | `393 × 852` | Single column · Hamburger nav · Search bar visible |
+| **iPad Mini** | `768 × 1024` | Sidebar appears · 2-col KPI grid · 2-col dash |
+| **iPad Pro** | `1024 × 1366` | Sidebar pinned · Wider layout · Full table |
+| **Laptop** | `1280 × 800` | 4-col KPI · Optimized chart/table split |
+| **Desktop** | `1440 × 900` | Full layout · Max comfortable reading width |
+
+### Responsive Breakpoints (Tailwind)
+
+```css
+/* Mobile first — default styles apply to ALL sizes */
+.grid-cols-1          /* 0px+   → single column stack        */
+sm:grid-cols-2        /* 640px+ → 2-col KPI cards            */
+md:grid-cols-[240px_1fr] /* 768px+ → sidebar + content      */
+xl:grid-cols-4        /* 1280px+ → 4-col KPI, full dashboard */
+```
+
+### Device Simulation Screenshots
+
+>  **How to capture:** Chrome DevTools → Device Toolbar → Select device → `Ctrl+Shift+P` → "Capture screenshot"
+
+####  iPhone SE — 375px
+```
+Single-column layout. Sidebar off-canvas.
+Hamburger "☰ Menu" button visible in header.
+KPI cards stack 1-per-row. All sections vertical.
+Date tabs horizontally scrollable.
+```
+
+####  iPad Mini — 768px
+```
+Sidebar pinned to left (240px).
+Header hides hamburger button.
+KPI cards: 2 × 2 grid.
+Dashboard: 2-col grid (chart + donut side by side).
+Table and activity feed below, side by side.
+```
+
+####  iPad Pro — 1024px
+```
+Same as iPad Mini but with more breathing room.
+Sidebar feels less cramped. Table shows all columns.
+Chart bars wider and more readable.
+```
+
+####  Desktop — 1440px
+```
+KPI cards: 4-col row.
+Dashboard: 2fr + 1fr split (revenue chart large left,
+donut compact right). Table + activity below.
+Full search bar in header. All nav labels visible.
+```
+
+<br/>
+
+---
+
+## Authors
+
+<div align="center">
+
+| Name | Role | GitHub |
+|---|---|---|
+| `Your Name Here` | Developer & Designer | `@yourusername` |
+
+<br/>
+
+*Submitted for Laboratory Activity 2 — Advanced UI Implementation*
+
+</div>
+
+<br/>
+
+---
+
+## Acknowledgements
+
+- [Tailwind CSS](https://tailwindcss.com/) — Utility-first CSS framework
+- [Bootstrap Icons](https://icons.getbootstrap.com/) — Open source icon library
+- [Alpine.js](https://alpinejs.dev/) — Lightweight JS reactivity
+- [Google Fonts](https://fonts.google.com/) — Syne, DM Sans, DM Mono typefaces
+- [Shields.io](https://shields.io/) — README badge generator
+- [Chrome DevTools](https://developer.chrome.com/docs/devtools/) — Lighthouse audit & device simulation
+
+<br/>
 
 ---
