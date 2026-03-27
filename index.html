@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusAnalytics — Sales Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg:      '#0a0a0f',
+            surface: '#13131c',
+            surface2:'#1c1c2a',
+            border:  '#2a2a3d',
+            accent:  '#e8ff47',
+            violet:  '#7b5cf0',
+            green:   '#3dffa0',
+            red:     '#ff5a5a',
+            muted:   '#8888aa',
+          },
+          fontFamily: {
+            head: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+            mono: ['DM Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    :focus-visible { outline: 2.5px solid #e8ff47; outline-offset: 3px; border-radius: 4px; }
+    .skip-link { position:absolute; top:-100%; left:1rem; }
+    .skip-link:focus { top:0; }
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-thumb { background:#2a2a3d; border-radius:3px; }
+    .bar { border-radius: 4px 4px 0 0; transition: opacity .2s; min-height: 4px; }
+    .kpi-top::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--kc); border-radius:20px 20px 0 0; }
+    @keyframes slideIn { from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} }
+    .toast-in { animation: slideIn .3s ease; }
+  </style>
+</head>
+
+<body class="bg-bg text-white min-h-screen overflow-x-hidden" x-data="app()" x-init="init()">
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link bg-accent text-black font-head font-bold text-sm px-4 py-2 rounded-b-lg z-[9999] focus:top-0">Skip to main content</a>
+
+  <!-- ARIA Live Region -->
+  <div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div x-show="sidebarOpen" @click="closeSidebar()"
+    class="fixed inset-0 bg-black/60 z-[199] md:hidden" aria-hidden="true"></div>
+
+  <!-- ── APP SHELL ── -->
+  <div class="md:grid md:grid-cols-[240px_1fr] md:grid-rows-[64px_1fr] min-h-screen">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside id="sidebar" :aria-hidden="!sidebarOpen && !mdUp ? 'true' : 'false'"
+      class="fixed top-0 left-0 h-screen w-[240px] bg-surface border-r border-border flex flex-col py-5 z-[200] transition-transform duration-300 md:static md:translate-x-0 md:h-auto md:row-span-2"
+      :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      role="navigation" aria-label="Primary navigation">
+
+      <!-- Close (mobile only) -->
+      <button @click="closeSidebar()" aria-label="Close navigation menu"
+        class="md:hidden flex items-center gap-2 text-muted text-sm px-5 pb-3 hover:text-white transition-colors">
+        <i class="bi bi-x-lg"></i> Close
+      </button>
+
+      <!-- Brand (mobile sidebar) -->
+      <p class="font-head font-extrabold text-accent px-5 pb-4 text-lg tracking-tight md:hidden">
+        Nexus<span class="text-white">Analytics</span>
+      </p>
+
+      <!-- Nav Section -->
+      <p class="font-mono text-[10px] uppercase tracking-widest text-muted px-5 pb-1 mt-1">Overview</p>
+      <nav class="flex flex-col gap-0.5 px-3" aria-label="Main menu">
+        <template x-for="item in mainNav" :key="item.label">
+          <a :href="item.href" @click.prevent="setNav(item)"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+            :class="item.active ? 'bg-accent/10 text-accent' : 'text-muted hover:bg-surface2 hover:text-white'"
+            :aria-current="item.active ? 'page' : undefined">
+            <i :class="item.icon + ' text-base w-5'"></i>
+            <span x-text="item.label"></span>
+            <span x-show="item.badge" x-text="item.badge"
+              class="ml-auto bg-violet text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"></span>
+          </a>
+        </template>
+      </nav>
+
+      <p class="font-mono text-[10px] uppercase tracking-widest text-muted px-5 pb-1 mt-4">Manage</p>
+      <nav class="flex flex-col gap-0.5 px-3" aria-label="Manage menu">
+        <template x-for="item in manageNav" :key="item.label">
+          <a :href="item.href" @click.prevent="setNav(item)"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+            :class="item.active ? 'bg-accent/10 text-accent' : 'text-muted hover:bg-surface2 hover:text-white'">
+            <i :class="item.icon + ' text-base w-5'"></i>
+            <span x-text="item.label"></span>
+          </a>
+        </template>
+      </nav>
+
+      <!-- Footer Nav -->
+      <div class="mt-auto border-t border-border pt-3 px-3">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted hover:bg-surface2 hover:text-white transition-all">
+          <i class="bi bi-gear text-base w-5"></i> Settings
+        </a>
+        <button @click="toast('Signed out successfully')"
+          class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted hover:bg-surface2 hover:text-white transition-all">
+          <i class="bi bi-power text-base w-5"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ══ HEADER ══ -->
+    <header class="bg-surface border-b border-border flex items-center px-5 gap-3 sticky top-0 z-[100] h-16" role="banner">
+      <!-- Hamburger (mobile) -->
+      <button @click="openSidebar()" aria-label="Open navigation menu"
+        :aria-expanded="sidebarOpen.toString()" aria-controls="sidebar"
+        class="md:hidden flex items-center gap-2 border border-border rounded-lg px-2.5 py-1.5 text-sm text-white hover:border-accent hover:bg-accent/10 transition-all">
+        <i class="bi bi-list text-base"></i> Menu
+      </button>
+
+      <!-- Brand -->
+      <a href="#" class="font-head font-extrabold text-accent text-lg tracking-tight shrink-0" aria-label="NexusAnalytics home">
+        Nexus<span class="text-white">Analytics</span>
+      </a>
+
+      <div class="flex-1"></div>
+
+      <!-- Search -->
+      <div class="hidden sm:flex items-center gap-2 bg-surface2 border border-border rounded-lg px-3 py-1.5 max-w-xs w-full" role="search">
+        <i class="bi bi-search text-muted text-sm"></i>
+        <input type="search" placeholder="Search products, orders…" aria-label="Search dashboard"
+          class="bg-transparent border-none outline-none text-sm text-white placeholder-muted w-full font-body"/>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2">
+        <button @click="toast('No new notifications')" aria-label="Notifications — 4 unread"
+          class="relative w-9 h-9 flex items-center justify-center border border-border rounded-lg text-muted hover:text-white hover:border-violet transition-all">
+          <i class="bi bi-bell text-base"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-surface" aria-hidden="true">4</span>
+        </button>
+
+        <div role="button" tabindex="0" aria-label="User menu — Alex Rivera" aria-haspopup="true" aria-expanded="false"
+          @click="toast('User menu coming soon')" @keydown.enter="toast('User menu coming soon')" @keydown.space.prevent="toast('User menu coming soon')"
+          class="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-violet to-accent flex items-center justify-center font-head font-bold text-xs text-black border-2 border-border hover:border-accent transition-all cursor-pointer">
+          AR
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ MAIN ══ -->
+    <main id="main-content" tabindex="-1" aria-label="Sales dashboard" class="p-5 lg:p-8 overflow-y-auto">
+
+      <!-- Page Header -->
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <h1 class="font-head font-extrabold text-3xl tracking-tight leading-none">Sales Dashboard</h1>
+          <p class="text-muted text-sm mt-1">Q1 2026 · Last updated 2 min ago</p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button @click="toast('Report exported!')"
+            class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border text-muted text-xs font-head font-bold hover:border-muted hover:text-white hover:bg-surface2 transition-all">
+            <i class="bi bi-download"></i> Export
+          </button>
+          <button @click="toast('New campaign created!')"
+            class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-black text-xs font-head font-bold hover:bg-yellow-300 transition-all">
+            <i class="bi bi-plus-lg"></i> New Campaign
+          </button>
+        </div>
+      </div>
+
+      <!-- Date Tabs -->
+      <div class="flex gap-1 bg-surface border border-border rounded-xl p-1 mb-6 w-fit overflow-x-auto" role="group" aria-label="Date range filter">
+        <template x-for="tab in dateTabs" :key="tab">
+          <button @click="setTab(tab)" :aria-pressed="activeTab === tab"
+            class="px-4 py-1.5 rounded-lg text-xs font-mono font-medium whitespace-nowrap transition-all"
+            :class="activeTab === tab ? 'bg-surface2 text-accent font-semibold' : 'text-muted hover:text-white hover:bg-surface2'">
+            <span x-text="tab"></span>
+          </button>
+        </template>
+      </div>
+
+      <!-- KPI Cards -->
+      <section aria-label="Key performance indicators" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <template x-for="kpi in kpis" :key="kpi.label">
+          <article class="kpi-top bg-surface border border-border rounded-2xl p-5 relative overflow-hidden hover:-translate-y-0.5 hover:border-violet transition-all"
+            :style="`--kc: ${kpi.color}`" :aria-label="kpi.label + ' KPI'">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-4 bg-white/5" :style="`color: ${kpi.color}`" aria-hidden="true">
+              <i :class="kpi.icon"></i>
+            </div>
+            <p class="font-mono text-[11px] uppercase tracking-wider text-muted mb-1" x-text="kpi.label"></p>
+            <p class="font-head font-extrabold text-3xl tracking-tight leading-none mb-2" x-text="kpi.value"></p>
+            <span class="inline-flex items-center gap-1 font-mono text-xs font-semibold"
+              :class="kpi.up ? 'text-green' : 'text-red'" :aria-label="(kpi.up ? 'Up' : 'Down') + ' ' + kpi.delta">
+              <i :class="kpi.up ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+              <span x-text="kpi.delta + ' vs last period'"></span>
+            </span>
+            <!-- Sparkline -->
+            <svg class="absolute bottom-0 right-0 w-20 h-10 opacity-30" :aria-hidden="true" viewBox="0 0 80 40" preserveAspectRatio="none">
+              <polyline :points="kpi.spark" fill="none" :stroke="kpi.color" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </article>
+        </template>
+      </section>
+
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2fr_1fr] gap-4">
+
+        <!-- Revenue Bar Chart -->
+        <section class="bg-surface border border-border rounded-2xl p-5 md:col-span-2 xl:col-span-1" aria-label="Monthly revenue chart">
+          <div class="flex items-start justify-between mb-5 flex-wrap gap-2">
+            <div>
+              <h2 class="font-head font-bold text-base tracking-tight">Revenue Overview</h2>
+              <p class="text-muted text-xs mt-0.5">Current vs Previous Period</p>
+            </div>
+            <span class="bg-surface2 border border-border text-muted font-mono text-[11px] px-2.5 py-1 rounded-full">Monthly</span>
+          </div>
+
+          <div class="flex items-end gap-2 sm:gap-3 h-40" role="img" aria-label="Bar chart: monthly revenue Jan–Jun, current period outperforms previous.">
+            <template x-for="bar in bars" :key="bar.month">
+              <div class="flex flex-col items-center gap-1.5 flex-1">
+                <div class="flex gap-0.5 items-end h-32 w-full justify-center">
+                  <div class="bar w-2.5 bg-surface2 border border-border cursor-pointer hover:opacity-70 focus:outline-accent"
+                    :style="`height: ${bar.prev}%`" tabindex="0" :aria-label="`${bar.month} previous: ${bar.prevLabel}`"></div>
+                  <div class="bar w-2.5 bg-accent cursor-pointer hover:opacity-70 focus:outline-accent"
+                    :style="`height: ${bar.curr}%`" tabindex="0" :aria-label="`${bar.month} current: ${bar.currLabel}`"></div>
+                </div>
+                <span class="font-mono text-[10px] text-muted" x-text="bar.month"></span>
+              </div>
+            </template>
+          </div>
+
+          <div class="flex gap-4 mt-3" aria-hidden="true">
+            <div class="flex items-center gap-1.5 text-xs font-mono text-muted">
+              <div class="w-2 h-2 rounded-sm bg-accent"></div> Current
+            </div>
+            <div class="flex items-center gap-1.5 text-xs font-mono text-muted">
+              <div class="w-2 h-2 rounded-sm bg-surface2 border border-border"></div> Previous
+            </div>
+          </div>
+        </section>
+
+        <!-- Donut Chart -->
+        <section class="bg-surface border border-border rounded-2xl p-5" aria-label="Sales by channel breakdown">
+          <h2 class="font-head font-bold text-base tracking-tight mb-0.5">Sales by Channel</h2>
+          <p class="text-muted text-xs mb-5">Revenue distribution</p>
+
+          <div class="flex flex-col items-center gap-4">
+            <div class="relative w-36 h-36" role="img" aria-label="Donut chart: Direct 45%, Organic 28%, Paid 17%, Referral 10%">
+              <svg viewBox="0 0 120 120" width="144" height="144">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#1c1c2a" stroke-width="18"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#e8ff47" stroke-width="18" stroke-dasharray="127.2 155.5" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#7b5cf0" stroke-width="18" stroke-dasharray="79.2 203.5" stroke-dashoffset="-127.2" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#ff9f47" stroke-width="18" stroke-dasharray="48 234.7" stroke-dashoffset="-206.4" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#ff5a5a" stroke-width="18" stroke-dasharray="28.3 254.4" stroke-dashoffset="-254.4" transform="rotate(-90 60 60)"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="font-head font-extrabold text-2xl tracking-tight">$284K</span>
+                <span class="font-mono text-[10px] text-muted">Total</span>
+              </div>
+            </div>
+
+            <ul class="w-full space-y-0" aria-label="Channel breakdown" role="list">
+              <template x-for="seg in donut" :key="seg.label">
+                <li class="flex items-center justify-between py-2 border-b border-border last:border-none text-sm" role="listitem">
+                  <span class="flex items-center gap-2 text-muted">
+                    <span class="w-2 h-2 rounded-full shrink-0" :style="`background:${seg.color}`" aria-hidden="true"></span>
+                    <span x-text="seg.label"></span>
+                  </span>
+                  <span class="font-mono font-medium text-sm" x-text="seg.pct"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Products Table -->
+        <section class="bg-surface border border-border rounded-2xl p-5" aria-label="Top products table">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <div>
+              <h2 class="font-head font-bold text-base tracking-tight">Top Products</h2>
+              <p class="text-muted text-xs mt-0.5">By revenue this period</p>
+            </div>
+            <button @click="toast('Viewing all products')"
+              class="text-[11px] font-head font-bold px-3 py-1.5 rounded-lg border border-border text-muted hover:text-white hover:border-muted hover:bg-surface2 transition-all">
+              View All
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full" aria-label="Top products by revenue">
+              <thead>
+                <tr>
+                  <th class="text-left font-mono text-[10px] uppercase tracking-widest text-muted pb-3 border-b border-border" scope="col">Product</th>
+                  <th class="text-left font-mono text-[10px] uppercase tracking-widest text-muted pb-3 border-b border-border" scope="col">Revenue</th>
+                  <th class="text-left font-mono text-[10px] uppercase tracking-widest text-muted pb-3 border-b border-border" scope="col">Units</th>
+                  <th class="text-left font-mono text-[10px] uppercase tracking-widest text-muted pb-3 border-b border-border" scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="p in products" :key="p.name">
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="py-3 border-b border-border/50 last:border-none">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0" :style="`background: ${p.iconBg}`">
+                          <i :class="p.icon" :style="`color: ${p.iconColor}`"></i>
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium" x-text="p.name"></div>
+                          <div class="font-mono text-[10px] text-muted" x-text="p.sku"></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3 border-b border-border/50 font-mono font-semibold text-sm" x-text="p.revenue"></td>
+                    <td class="py-3 border-b border-border/50 font-mono text-sm text-muted" x-text="p.units"></td>
+                    <td class="py-3 border-b border-border/50">
+                      <span class="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                        :class="p.status === 'Active' ? 'text-green bg-green/10' : p.status === 'Pending' ? 'text-[#ffb547] bg-[#ffb547]/10' : 'text-muted bg-surface2'">
+                        <span class="w-1.5 h-1.5 rounded-full bg-current" aria-hidden="true"></span>
+                        <span x-text="p.status"></span>
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Activity Feed -->
+        <section class="bg-surface border border-border rounded-2xl p-5" aria-label="Recent activity feed">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <div>
+              <h2 class="font-head font-bold text-base tracking-tight">Recent Activity</h2>
+              <p class="text-muted text-xs mt-0.5">Live updates</p>
+            </div>
+            <button @click="toast('Activity log loaded')"
+              class="text-[11px] font-head font-bold px-3 py-1.5 rounded-lg border border-border text-muted hover:text-white hover:border-muted hover:bg-surface2 transition-all">
+              View Log
+            </button>
+          </div>
+          <ul class="space-y-0" aria-label="Activity log" role="list">
+            <template x-for="a in activity" :key="a.text">
+              <li class="flex gap-3 py-3 border-b border-border/50 last:border-none" role="listitem">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5" :style="`background: ${a.iconBg}`" aria-hidden="true">
+                  <i :class="a.icon" :style="`color: ${a.iconColor}`"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm leading-snug" x-html="a.text"></p>
+                  <p class="font-mono text-[10px] text-muted mt-0.5" x-text="a.time"></p>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </section>
+
+      </div><!-- /dash-grid -->
+    </main>
+  </div><!-- /app-shell -->
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-2 z-[999]" aria-live="assertive" aria-atomic="true"></div>
+
+  <script>
+    function app() {
+      return {
+        sidebarOpen: false,
+        mdUp: window.innerWidth >= 768,
+        activeTab: '30D',
+        dateTabs: ['7D','30D','90D','YTD','All Time'],
+
+        mainNav: [
+          { label:'Dashboard', href:'#', icon:'bi bi-grid-fill',      active:true,  badge:null },
+          { label:'Analytics', href:'#', icon:'bi bi-graph-up-arrow', active:false, badge:'3' },
+          { label:'Revenue',   href:'#', icon:'bi bi-currency-dollar',active:false, badge:null },
+          { label:'Products',  href:'#', icon:'bi bi-box-seam',       active:false, badge:null },
+        ],
+        manageNav: [
+          { label:'Customers', href:'#', icon:'bi bi-people',      active:false },
+          { label:'Orders',    href:'#', icon:'bi bi-bag-check',   active:false },
+          { label:'Reports',   href:'#', icon:'bi bi-file-earmark-bar-graph', active:false },
+        ],
+
+        kpis: [
+          { label:'Total Revenue',    value:'$284,392', delta:'18.2%', up:true,  color:'#e8ff47', icon:'bi bi-currency-dollar', spark:'0,35 13,28 26,30 39,18 52,22 65,10 80,5' },
+          { label:'Total Orders',     value:'3,847',    delta:'9.4%',  up:true,  color:'#7b5cf0', icon:'bi bi-bag',             spark:'0,30 13,26 26,32 39,20 52,24 65,14 80,10' },
+          { label:'Conversion Rate',  value:'4.73%',    delta:'1.1%',  up:false, color:'#3dffa0', icon:'bi bi-percent',         spark:'0,10 13,14 26,12 39,20 52,18 65,28 80,30' },
+          { label:'Avg Order Value',  value:'$73.92',   delta:'5.7%',  up:true,  color:'#ff9f47', icon:'bi bi-receipt',         spark:'0,28 13,24 26,26 39,20 52,16 65,12 80,8'  },
+        ],
+
+        bars: [
+          { month:'Jan', prev:55, curr:70, prevLabel:'$38K', currLabel:'$48K' },
+          { month:'Feb', prev:45, curr:60, prevLabel:'$32K', currLabel:'$41K' },
+          { month:'Mar', prev:65, curr:85, prevLabel:'$44K', currLabel:'$58K' },
+          { month:'Apr', prev:50, curr:75, prevLabel:'$35K', currLabel:'$51K' },
+          { month:'May', prev:70, curr:95, prevLabel:'$48K', currLabel:'$65K' },
+          { month:'Jun', prev:60, curr:100,prevLabel:'$41K', currLabel:'$70K' },
+        ],
+
+        donut: [
+          { label:'Direct',  pct:'45%', color:'#e8ff47' },
+          { label:'Organic', pct:'28%', color:'#7b5cf0' },
+          { label:'Paid Ads',pct:'17%', color:'#ff9f47' },
+          { label:'Referral',pct:'10%', color:'#ff5a5a' },
+        ],
+
+        products: [
+          { name:'AI Suite Pro', sku:'SKU-0041', revenue:'$82,400', units:'1,142', status:'Active',  icon:'bi bi-cpu',          iconBg:'rgba(232,255,71,.12)', iconColor:'#e8ff47' },
+          { name:'DataViz Pack', sku:'SKU-0018', revenue:'$61,220', units:'894',   status:'Active',  icon:'bi bi-bar-chart',    iconBg:'rgba(123,92,240,.12)', iconColor:'#7b5cf0' },
+          { name:'SpeedOps',     sku:'SKU-0077', revenue:'$47,880', units:'650',   status:'Pending', icon:'bi bi-lightning',    iconBg:'rgba(255,181,71,.12)', iconColor:'#ffb547' },
+          { name:'SecureVault',  sku:'SKU-0033', revenue:'$38,640', units:'521',   status:'Paused',  icon:'bi bi-shield-lock',  iconBg:'rgba(61,255,160,.12)', iconColor:'#3dffa0' },
+        ],
+
+        activity: [
+          { text:'<strong>New sale</strong> — AI Suite Pro · $720',    time:'2 minutes ago',  icon:'bi bi-currency-dollar', iconBg:'rgba(232,255,71,.12)', iconColor:'#e8ff47' },
+          { text:'<strong>New customer</strong> — Sarah M. joined',     time:'14 minutes ago', icon:'bi bi-person-plus',     iconBg:'rgba(123,92,240,.12)', iconColor:'#7b5cf0' },
+          { text:'<strong>Refund</strong> — Order #8821 · $149',        time:'1 hour ago',     icon:'bi bi-arrow-return-left',iconBg:'rgba(255,90,90,.12)', iconColor:'#ff5a5a' },
+          { text:'<strong>Campaign hit</strong> — Q1 target reached!',  time:'3 hours ago',    icon:'bi bi-bullseye',        iconBg:'rgba(61,255,160,.12)', iconColor:'#3dffa0' },
+          { text:'<strong>Low stock</strong> — SpeedOps below 50 units',time:'5 hours ago',    icon:'bi bi-exclamation-triangle',iconBg:'rgba(255,181,71,.12)',iconColor:'#ffb547' },
+        ],
+
+        init() {
+          window.addEventListener('resize', () => { this.mdUp = window.innerWidth >= 768; });
+          document.addEventListener('keydown', e => { if (e.key === 'Escape') this.closeSidebar(); });
+        },
+        openSidebar()  { this.sidebarOpen = true; },
+        closeSidebar() { this.sidebarOpen = false; },
+        setNav(item) {
+          [...this.mainNav, ...this.manageNav].forEach(n => n.active = false);
+          item.active = true;
+          if (window.innerWidth < 768) this.closeSidebar();
+        },
+        setTab(tab) {
+          this.activeTab = tab;
+          this.announce(`Date range set to ${tab}`);
+        },
+        toast(msg) {
+          const c = document.getElementById('toast-container');
+          const t = document.createElement('div');
+          t.className = 'toast-in flex items-center gap-2 bg-surface border border-border border-l-4 border-l-accent rounded-xl px-4 py-3 text-sm shadow-2xl min-w-[200px] max-w-[300px]';
+          t.setAttribute('role','status');
+          t.innerHTML = `<i class="bi bi-stars text-accent"></i> ${msg}`;
+          c.appendChild(t);
+          this.announce(msg);
+          setTimeout(() => t.remove(), 3500);
+        },
+        announce(msg) {
+          const r = document.getElementById('live-region');
+          r.textContent = '';
+          setTimeout(() => r.textContent = msg, 50);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
