@@ -32,3 +32,7 @@
 The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow accent** (`#e8ff47`), custom typography using `Syne` + `DM Sans` + `DM Mono`, and data-driven components powered by Alpine.js.
 
 <br/>
+
+
+
+---
