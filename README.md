@@ -56,14 +56,21 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 
 ### Desktop View — 1440px
 
-<img src="screenshots/desktop.jpg" width="30%" alt="Desktop mode" />
+<img src="screenshots/laptop.png" width="30%" alt="Desktop mode" />
 
 <br/>
 
-### Mobile View — 375px (iPhone SE)
+### Mobile View — 430px (iPhone 14 Pro Max)
  
-  <img src="screenshots/phone.jpg" width="30%" alt="Phone view" />
+  <img src="screenshots/iphone14promax.png" width="30%" alt="Phone view" />
 
+### Mobile View — 360px (Infinix Hot 50 Pro Plus)
+ 
+  <img src="screenshots/infinix.jpg" width="30%" alt="Phone view" />
+
+### Ipad View — 1024px (Ipad Pro)
+ 
+  <img src="screenshots/ipad-pro.png" width="30%" alt="Ipad view" />  
 </div>
 
 <br/>
@@ -73,15 +80,15 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 ## Features
 
 - **KPI Cards** — Total Revenue, Orders, Conversion Rate, Avg Order Value with sparkline SVGs and delta indicators
-- ** Revenue Bar Chart** — Pure CSS bars comparing current vs previous period across 6 months
-- ** Donut Chart** — SVG-based sales breakdown by channel (Direct, Organic, Paid, Referral)
-- ** Top Products Table** — Scrollable data table with status pills (Active / Pending / Paused)
+- **Revenue Bar Chart** — Pure CSS bars comparing current vs previous period across 6 months
+- **Donut Chart** — SVG-based sales breakdown by channel (Direct, Organic, Paid, Referral)
+- **Top Products Table** — Scrollable data table with status pills (Active / Pending / Paused)
 - **Activity Feed** — Live-style event log with timestamped entries
-- ** Toast Notifications** — ARIA live region announcements for all interactions
-- ** Off-Canvas Sidebar** — Mobile slide-in nav with overlay, ESC key close, focus trap
-- ** Dark Theme** — Full dark palette with `#e8ff47` lime accent, `#7b5cf0` violet secondary
-- ** Date Range Tabs** — Toggle filter with `aria-pressed` state management
-- ** Search Bar** — Accessible search input with `role="search"`
+- **Toast Notifications** — ARIA live region announcements for all interactions
+- **Off-Canvas Sidebar** — Mobile slide-in nav with overlay, ESC key close, focus trap
+- **Dark Theme** — Full dark palette with `#e8ff47` lime accent, `#7b5cf0` violet secondary
+- **Date Range Tabs** — Toggle filter with `aria-pressed` state management
+- **Search Bar** — Accessible search input with `role="search"`
 - **Skip Link** — First tab stop jumps directly to main content
 
 <br/>
@@ -96,7 +103,7 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 | **Styling** | CSS3 | Custom properties, animations, scrollbar |
 | **Layout** | Tailwind CSS v3 (CDN) | Utility-first responsive grid & spacing |
 | **Icons** | Bootstrap Icons v1.11 (CDN) | Crisp vector icon set |
-| **Reactivity** | Alpine.js v3 (CDN) | Declarative JS — sidebar, tabs, toasts, loops |
+| **Reactivity** | Alpine.js v3 (CDN) | Declarative JS sidebar, tabs, toasts, loops |
 | **Typography** | Google Fonts | Syne · DM Sans · DM Mono |
 | **Charts** | Pure SVG + CSS | Zero-dependency bar & donut charts |
 
@@ -110,36 +117,38 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 
 No installation, no build step, no dependencies to install locally.
 
-### Option A — Open Directly
+### 1. Clone the Repository
+First, copy the repository link, then run this command in your terminal:
+
 ```bash
-# Just double-click the file in your file explorer, OR:
-open dashboard-v2.html          # macOS
-start dashboard-v2.html         # Windows
-xdg-open dashboard-v2.html      # Linux
+git clone https://github.com/your-username/your-repo.git
+
+After cloning, go inside the project folder:
+
+cd your-repo
 ```
 
-### Option B — Local Dev Server (recommended for DevTools testing)
+### 2. Make Changes
+You can now open the project in your preferred code editor (e.g., VS Code) and start editing files.
+
+### 3. Add Changes
+After making changes, you need to stage them:
 ```bash
-# Using VS Code Live Server extension — right-click → Open with Live Server
-
-# Using Python
-python -m http.server 8080
-# Then visit: http://localhost:8080/dashboard-v2.html
-
-# Using Node.js
-npx serve .
-# Then visit: http://localhost:3000/dashboard-v2.html
+git add .
 ```
 
-### Option C — CDN Links (already embedded)
-All external resources load from CDN automatically — just open the file with an internet connection.
-
-```html
-<!-- Already in <head> — nothing to install -->
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+### 4. Commit Changes
+Save your changes with a message:
+```bash
+git commit -m "Your message here"
 ```
+
+### 5. Push to GitHub
+end your changes to the repository:
+```bash
+git push origin main
+```
+Note: If your branch is not main, replace main with your branch name.
 
 <br/>
 
@@ -160,36 +169,6 @@ Tested using **Chrome DevTools → Device Toolbar** (`Ctrl+Shift+M` / `Cmd+Shift
 | **Laptop** | `1280 × 800` | 4-col KPI · Optimized chart/table split |
 | **Desktop** | `1440 × 900` | Full layout · Max comfortable reading width |
 
-### Responsive Breakpoints (Tailwind)
-
-```css
-/* Mobile first — default styles apply to ALL sizes */
-.grid-cols-1          /* 0px+   → single column stack        */
-sm:grid-cols-2        /* 640px+ → 2-col KPI cards            */
-md:grid-cols-[240px_1fr] /* 768px+ → sidebar + content      */
-xl:grid-cols-4        /* 1280px+ → 4-col KPI, full dashboard */
-```
-
-### Device Simulation Screenshots
-
->  **How to capture:** Chrome DevTools → Device Toolbar → Select device → `Ctrl+Shift+P` → "Capture screenshot"
-
-####  iPhone SE — 375px
-```
-Single-column layout. Sidebar off-canvas.
-Hamburger "☰ Menu" button visible in header.
-KPI cards stack 1-per-row. All sections vertical.
-Date tabs horizontally scrollable.
-```
-
-####  iPad Mini — 768px
-```
-Sidebar pinned to left (240px).
-Header hides hamburger button.
-KPI cards: 2 × 2 grid.
-Dashboard: 2-col grid (chart + donut side by side).
-Table and activity feed below, side by side.
-```
 
 ####  iPad Pro — 1024px
 ```
@@ -216,7 +195,11 @@ Full search bar in header. All nav labels visible.
 
 | Name | Role | GitHub |
 |---|---|---|
-| `Your Name Here` | Developer & Designer | `@yourusername` |
+| `Philip Etorma` | Designer | `@philipetorma` |
+| `Jayson Simbajon` | Contributors | `@jaysonsimbajon6-byte` |
+| `Kristine Jane Tagadiad` | Contributors | `@Kristinejanetagadiad` |
+| `Jacqueline Espina` | Contributors | `@jacquelineespina371-rgb` |
+| `John Kenneth Gaviola` | Contributors | `@Kenneth30222` |
 
 <br/>
 
