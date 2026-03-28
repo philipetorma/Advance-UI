@@ -56,13 +56,13 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 
 ### Desktop View — 1440px
 
-<img src="screenshots/laptop.png" width="30%" alt="Desktop mode" />
+<img src="screenshots/laptop.PNG" width="30%" alt="Desktop mode" />
 
 <br/>
 
 ### Mobile View — 430px (iPhone 14 Pro Max)
  
-  <img src="screenshots/iphone14promax.png" width="30%" alt="Phone view" />
+  <img src="screenshots/iphone14promax.PNG" width="30%" alt="Phone view" />
 
 ### Mobile View — 360px (Infinix Hot 50 Pro Plus)
  
@@ -70,7 +70,7 @@ The UI features a **dark theme** (`#0a0a0f` background) with a **lime-yellow acc
 
 ### Ipad View — 1024px (Ipad Pro)
  
-  <img src="screenshots/ipad-pro.png" width="30%" alt="Ipad view" />  
+  <img src="screenshots/ipad-pro.PNG" width="30%" alt="Ipad view" />  
 </div>
 
 <br/>
@@ -121,11 +121,11 @@ No installation, no build step, no dependencies to install locally.
 First, copy the repository link, then run this command in your terminal:
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/philipetorma/Advance-UI.git
 
 After cloning, go inside the project folder:
 
-cd your-repo
+cd Advance-UI
 ```
 
 ### 2. Make Changes
@@ -193,23 +193,21 @@ Full search bar in header. All nav labels visible.
 
 <div align="center">
 
-| Name | Role | GitHub |
-|---|---|---|
-| `Philip Etorma` | Designer | `@philipetorma` |
-| `Jayson Simbajon` | Contributors | `@jaysonsimbajon6-byte` |
-| `Kristine Jane Tagadiad` | Contributors | `@Kristinejanetagadiad` |
-| `Jacqueline Espina` | Contributors | `@jacquelineespina371-rgb` |
-| `John Kenneth Gaviola` | Contributors | `@Kenneth30222` |
-
-<br/>
-
-*Submitted for Laboratory Activity 2 — Advanced UI Implementation*
+| Name                       | Role             | GitHub                                                                 |
+| -------------------------- | ---------------- | ---------------------------------------------------------------------- |
+| **Philip Etorma**          | Owner | [@philipetorma](https://github.com/philipetorma)                       |
+| **Jayson Simbajon**        | Contributor      | [@jaysonsimbajon6-byte](https://github.com/jaysonsimbajon6-byte)       |
+| **Kristine Jane Tagadiad** | Contributor      | [@Kristinejanetagadiad](https://github.com/Kristinejanetagadiad)       |
+| **Jacqueline Espina**      | Contributor      | [@jacquelineespina371-rgb](https://github.com/jacquelineespina371-rgb) |
+| **John Kenneth Gaviola**   | Contributor      | [@Kenneth30222](https://github.com/Kenneth30222)                       |
 
 </div>
 
 <br/>
-
+*Submitted for **Laboratory Activity 2 — Advanced UI Implementation***
+<br/>
 ---
+
 
 ## Acknowledgements
 
