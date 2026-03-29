@@ -40,7 +40,7 @@
 | Requirement | Implementation |
 |---|---|
 | **CSS Grid Layout** | Mobile-first multi-area dashboard grid that collapses to single-column on small screens |
-| *Accessibility Audit** | WCAG AA/AAA contrast ratios, full ARIA labeling, semantic HTML, live regions |
+| **Accessibility Audit** | WCAG AA/AAA contrast ratios, full ARIA labeling, semantic HTML, live regions |
 | **Keyboard Navigation** | Every interactive element reachable via `Tab`, activatable via `Enter` / `Space` |
 | **Device Simulation** | Tested and documented across 6 device profiles using Chrome DevTools |
 
@@ -201,11 +201,14 @@ Full search bar in header. All nav labels visible.
 | **Jacqueline Espina**      | Contributor      | [@jacquelineespina371-rgb](https://github.com/jacquelineespina371-rgb) |
 | **John Kenneth Gaviola**   | Contributor      | [@Kenneth30222](https://github.com/Kenneth30222)                       |
 
+<br/>
+
+*Submitted for Laboratory Activity 2 — Advanced UI Implementation*
+
 </div>
 
 <br/>
-*Submitted for **Laboratory Activity 2 — Advanced UI Implementation***
-<br/>
+
 ---
 
 
